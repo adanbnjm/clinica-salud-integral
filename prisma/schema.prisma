@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum EstadoCita {
+  PROGRAMADA
+  COMPLETADA
+  CANCELADA
+}
+
+enum Role {
+  RECEPCIONISTA
+  MEDICO
+  GERENCIA
+}
+
+model Especialidad {
+  id      Int      @id @default(autoincrement())
+  nombre  String   @unique
+  medicos Medico[]
+
+  @@map("especialidades")
+}
+
+model Medico {
+  id              Int          @id @default(autoincrement())
+  nombre          String
+  apellidoPaterno String
+  apellidoMaterno String?
+  telefono        String
+  especialidadId  Int          @map("especialidad_id")
+  especialidad    Especialidad @relation(fields: [especialidadId], references: [id])
+  citas           Cita[]
+
+  @@map("medicos")
+}
+
+model Paciente {
+  id              Int      @id @default(autoincrement())
+  nombre          String
+  apellidoPaterno String
+  apellidoMaterno String?
+  ci              String   @unique
+  email           String   @unique
+  telefono        String?
+  direccion       String?
+  fechaNacimiento DateTime @map("fecha_nacimiento")
+
+  citas Cita[]
+
+  @@map("pacientes")
+}
+
+model Cita {
+  id         Int        @id @default(autoincrement())
+  fechaHora  DateTime   @map("fecha_hora")
+  creadaEn   DateTime   @default(now()) @map("creada_en")
+  estado     EstadoCita @default(PROGRAMADA)
+  pacienteId Int        @map("paciente_id")
+  medicoId   Int        @map("medico_id")
+
+  paciente Paciente @relation(fields: [pacienteId], references: [id])
+  medico   Medico   @relation(fields: [medicoId], references: [id])
+
+  @@map("citas")
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  password String
+  role     Role
+
+  @@map("users")
+}
