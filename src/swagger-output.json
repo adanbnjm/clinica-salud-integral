@@ -197,30 +197,6 @@
         ],
         "summary": "Crear una cita",
         "description": "Agenda una cita para un paciente con un médico.",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "pacienteId": {
-                  "type": "number",
-                  "example": 1
-                },
-                "medicoId": {
-                  "type": "number",
-                  "example": 1
-                },
-                "fechaHora": {
-                  "type": "string",
-                  "example": "2026-09-15T10:00:00"
-                }
-              }
-            }
-          }
-        ],
         "responses": {
           "201": {
             "description": "Cita creada correctamente"
@@ -242,7 +218,37 @@
           {
             "bearerAuth": []
           }
-        ]
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "pacienteId",
+                  "medicoId",
+                  "fechaHora"
+                ],
+                "properties": {
+                  "pacienteId": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "medicoId": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "fechaHora": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2026-09-10T10:00:00"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/citas/medico/{id}": {
@@ -430,6 +436,72 @@
             }
           }
         }
+      }
+    },
+    "/api/reports/appointments-by-specialty": {
+      "get": {
+        "tags": [
+          "Reportes"
+        ],
+        "summary": "Obtener citas por especialidad",
+        "description": "Obtiene el volumen total de citas agrupado por especialidad.",
+        "responses": {
+          "200": {
+            "description": "Reporte de citas agrupadas por especialidad"
+          },
+          "401": {
+            "description": "Token no proporcionado o inválido"
+          },
+          "403": {
+            "description": "No tienes permiso para acceder a este recurso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/reports/daily-cutoff": {
+      "get": {
+        "tags": [
+          "Reportes"
+        ],
+        "summary": "Obtener corte operativo diario",
+        "description": "Obtiene la cantidad de citas completadas y canceladas para una fecha.",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "required": true,
+            "format": "date",
+            "description": "Fecha del reporte en formato YYYY-MM-DD",
+            "example": "2026-09-06",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Corte operativo diario"
+          },
+          "400": {
+            "description": "Fecha inválida"
+          },
+          "401": {
+            "description": "Token no proporcionado o inválido"
+          },
+          "403": {
+            "description": "No tienes permiso para acceder a este recurso"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     }
   },

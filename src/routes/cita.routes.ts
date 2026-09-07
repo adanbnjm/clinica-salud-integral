@@ -22,13 +22,30 @@ router.post(
     #swagger.description = 'Agenda una cita para un paciente con un médico.'
     #swagger.security = [{ "bearerAuth": [] }]
 
-    #swagger.parameters['body'] = {
-      in: 'body',
+    #swagger.requestBody = {
       required: true,
-      schema: {
-        pacienteId: 1,
-        medicoId: 1,
-        fechaHora: '2026-09-15T10:00:00'
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            required: ["pacienteId", "medicoId", "fechaHora"],
+            properties: {
+              pacienteId: {
+                type: "integer",
+                example: 1
+              },
+              medicoId: {
+                type: "integer",
+                example: 1
+              },
+              fechaHora: {
+                type: "string",
+                format: "date-time",
+                example: "2026-09-10T10:00:00"
+              }
+            }
+          }
+        }
       }
     }
 
@@ -123,24 +140,24 @@ router.patch(
       description: 'ID de la cita'
     }
 
-   #swagger.requestBody = {
-  required: true,
-  content: {
-    "application/json": {
-      schema: {
-        type: "object",
-        required: ["estado"],
-        properties: {
-          estado: {
-            type: "string",
-            enum: ["COMPLETADA", "CANCELADA"],
-            example: "COMPLETADA"
+    #swagger.requestBody = {
+      required: true,
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            required: ["estado"],
+            properties: {
+              estado: {
+                type: "string",
+                enum: ["COMPLETADA", "CANCELADA"],
+                example: "COMPLETADA"
+              }
+            }
           }
         }
       }
     }
-  }
-}
 
     #swagger.responses[200] = {
       description: 'Estado de la cita actualizado correctamente'
